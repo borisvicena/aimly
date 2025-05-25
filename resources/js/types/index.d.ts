@@ -36,4 +36,25 @@ export interface User {
     updated_at: string;
 }
 
+export interface Goal {
+    id: number;
+    title: string;
+    description: string;
+    deadline: string;
+    status: 'in_progress' | 'completed' | 'overdue';
+    created_at: string;
+    updated_at: string;
+    tasks: Task[];
+}
+
+export interface Task {
+    id: number;
+    goal_id: number;
+    title: string;
+    due_date: string;
+    status: 'in_progress' | 'completed' | 'overdue';
+    created_at: string;
+    updated_at: string;
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;

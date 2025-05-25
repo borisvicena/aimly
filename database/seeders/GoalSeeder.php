@@ -13,6 +13,6 @@ class GoalSeeder extends Seeder
      */
     public function run(): void
     {
-        Goal::factory(5)->create();
+        Goal::factory(100)->create();
     }
 }

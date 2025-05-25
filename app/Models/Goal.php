@@ -26,4 +26,9 @@ class Goal extends Model
     {
         return $this->hasMany(Task::class, 'goal_id', 'id');
     }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
 }

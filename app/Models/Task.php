@@ -26,4 +26,9 @@ class Task extends Model
     {
         return $this->belongsTo(Goal::class, 'goal_id', 'id');
     }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
 }
