@@ -79,6 +79,18 @@ const filteredGoals = computed(() => {
     });
 });
 
+const completedTasksThisMonthCount = computed(() => {
+    return filteredGoals.value.reduce((count: number, goal: any) => {
+        return count + (goal.tasks || []).filter((task: any) => task.status === 'completed').length;
+    }, 0);
+});
+
+const allTaskThisMonthCount = computed(() => {
+    return filteredGoals.value.reduce((count: number, goal: any) => {
+        return count + (goal.tasks || []).length;
+    }, 0);
+});
+
 // Event emitters
 const emit = defineEmits<{
     (e: 'update:selectedMonth', value: string): void;
@@ -114,7 +126,11 @@ onUpdated(() => {
                 </div>
                 <div class="sm:items-between flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
                     <div class="sm:flex-center flex w-full flex-col justify-between gap-4 sm:items-center">
-                        <ProgressCard :tasks="allTasks" />
+                        <ProgressCard
+                            :all-tasks="allTaskThisMonthCount"
+                            :completed-tasks="completedTasksThisMonthCount"
+                            :selected-month="selectedMonth"
+                        />
                         <AdvancedFilterCard
                             v-model:selected-month="selectedMonth"
                             v-model:filter-type="filterType"

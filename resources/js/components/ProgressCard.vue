@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { Task } from '@/types';
 import { Flag } from 'lucide-vue-next';
-import { computed } from 'vue';
 import Icon from './Icon.vue';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 
 const props = defineProps<{
-    tasks: Task[];
+    allTasks: number;
+    completedTasks?: number;
+    selectedMonth?: string;
 }>();
-
-// Task summaries
-const allTasks = computed(() => props.tasks.length);
-const completedTasks = computed(() => props.tasks.filter((t) => t.status === 'completed').length);
 
 // Status labels
 const statuses = [
@@ -35,9 +31,9 @@ const statuses = [
             <!-- Completion summary -->
             <p class="text-muted-foreground text-sm">
                 You’ve completed
-                <span class="font-semibold text-green-600">{{ completedTasks }}</span> /
-                <span class="text-foreground font-semibold">{{ allTasks }}</span>
-                tasks this month.
+                <span class="font-semibold text-green-600">{{ props.completedTasks }}</span> /
+                <span class="text-foreground font-semibold">{{ props.allTasks }}</span>
+                for month {{ props.selectedMonth || 'this month' }}.
             </p>
         </CardContent>
 
