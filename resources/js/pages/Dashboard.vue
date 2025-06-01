@@ -114,7 +114,7 @@ onUpdated(() => {
                 </div>
                 <div class="sm:items-between flex w-full flex-col gap-4 sm:flex-row sm:justify-center">
                     <div class="sm:flex-center flex w-full flex-col justify-between gap-4 sm:items-center">
-                        <ProgressCard :tasks="allTasks" v-model:selectedMonth="selectedMonth" />
+                        <ProgressCard :tasks="allTasks" />
                         <AdvancedFilterCard
                             v-model:selected-month="selectedMonth"
                             v-model:filter-type="filterType"
