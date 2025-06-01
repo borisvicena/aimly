@@ -26,6 +26,3 @@ Route::prefix('goal')->name('goal.')->group(function () {
 // Task routes (not nested)
 Route::post('/task/{id}/update', [TaskController::class, 'toggleStatus'])->name('task.update');
 Route::delete('/task/{id}/delete', [TaskController::class, 'destroy'])->name('task.destroy');
-
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
