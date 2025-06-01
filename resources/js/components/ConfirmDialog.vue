@@ -11,14 +11,17 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { LucideIcon, Trash2 } from 'lucide-vue-next';
 
 const props = defineProps<{
     type: 'task' | 'goal';
-    title: string;
+    title?: string;
     description: string;
     modelTitle?: string;
     icon?: LucideIcon;
+    variant: 'destructive' | 'ghost';
+    class?: string;
 }>();
 
 const emit = defineEmits<{
@@ -32,8 +35,10 @@ function handleConfirm(e: Event) {
 <template>
     <AlertDialog>
         <AlertDialogTrigger as-child>
-            <Button v-if="!props.icon" size="sm" variant="destructive" @click.stop.prevent> <Trash2 class="h-4 w-4" /> {{ props.title }} </Button>
-            <Button v-else size="icon" variant="destructive" @click.stop.prevent>
+            <Button v-if="!props.icon" size="sm" :variant="variant" @click.stop.prevent :class="cn('h-8 w-8', props.class)">
+                <Trash2 class="h-4 w-4" /> {{ props.title }}
+            </Button>
+            <Button v-else size="icon" variant="destructive" @click.stop.prevent :class="cn('h-8 w-8', props.class)">
                 <component :is="props.icon || Trash2" class="h-4 w-4" />
             </Button>
         </AlertDialogTrigger>

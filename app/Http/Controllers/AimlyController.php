@@ -21,7 +21,7 @@ class AimlyController extends Controller
         }])->ordered()->get();
     
 
-        return inertia('Welcome', [
+        return inertia('Dashboard', [
             'goals' => $goals,
         ]);
     }

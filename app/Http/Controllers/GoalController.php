@@ -109,6 +109,21 @@ class GoalController extends Controller
         return redirect()->route('index')->with('success', 'Goal updated successfully.');
     }
 
+    public function updateStatus(int $id)
+    {
+        $goal = Goal::findOrFail($id);
+
+        if ($goal->status === 'completed') {
+            $goal->status = strtotime($goal->deadline) < time() ? 'overdue' : 'active';
+        } else {
+            $goal->status = 'completed';
+        }
+
+        $goal->save();
+        
+        return redirect()->route('index')->with('success', 'Status updated successfully');
+    }
+
     /**
      * Remove the specified goal.
      * 

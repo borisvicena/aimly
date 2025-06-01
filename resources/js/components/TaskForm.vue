@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useInertiaRouter } from '@/composables/useInertiaRouter';
 import { cn } from '@/lib/utils';
 import { Goal } from '@/types';
 import { router } from '@inertiajs/vue3';
@@ -17,6 +18,7 @@ import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import * as z from 'zod';
 
+const inertia = useInertiaRouter();
 const formSchema = toTypedSchema(
     z.object({
         title: z.string().min(2).max(50),
@@ -46,14 +48,13 @@ const props = defineProps<{
 const onSubmit = handleSubmit((values) => {
     console.log('Form submitted with values:', values);
 
-    router.post(
+    inertia.post(
         route('goal.task.store', props.goal?.id),
         {
             title: values.title,
             due_date: values.due_date,
         },
         {
-            preserveScroll: true,
             onSuccess: () => {
                 // Reset form
                 setFieldValue('title', '');
@@ -65,7 +66,7 @@ const onSubmit = handleSubmit((values) => {
                     preserveState: true,
                 });
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 toast.error('Error: ' + error.message, {
                     description: 'Please check the form and try again.',
                 });

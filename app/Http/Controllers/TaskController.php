@@ -44,6 +44,9 @@ class TaskController extends Controller
         if ($request->input('due_date') && strtotime($request->input('due_date')) < strtotime(date('Y-m-d'))) {
             return redirect()->back()->withErrors(['message' => 'The due date must be today or a future date.']);
         }
+        if ($goal->deadline && strtotime($request->input('due_date')) > strtotime($goal->deadline)) {
+            return redirect()->back()->withErrors(['message' => 'The due date must be on or before the goal deadline.']);
+        }
         if ($request->input('due_date')) {
             $status = (strtotime($request->input('due_date')) > time()) ? 'in_progress' : 'overdue';
             $request->merge(['status' => $status]);

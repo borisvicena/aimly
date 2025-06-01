@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Github, LayoutGrid, Menu } from 'lucide-vue-next';
+import { Github, LayoutGrid, Menu } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppearanceSelect from './AppearanceSelect.vue';
 
@@ -48,11 +48,6 @@ const rightNavItems: NavItem[] = [
         title: 'Github Repository',
         href: 'https://github.com/borisvicena/aimly',
         icon: Github,
-    },
-    {
-        title: 'TO DO',
-        href: '/',
-        icon: BookOpen,
     },
 ];
 </script>

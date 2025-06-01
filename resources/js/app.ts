@@ -1,5 +1,6 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import 'nprogress/nprogress.css';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
@@ -31,8 +32,9 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: '#FF0000',
+        color: '#4B5563',
         showSpinner: true,
+        delay: 0,
     },
 });
 

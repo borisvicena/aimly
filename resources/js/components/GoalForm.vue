@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useInertiaRouter } from '@/composables/useInertiaRouter';
 import { cn } from '@/lib/utils';
-import { router } from '@inertiajs/vue3';
 import { DateFormatter, getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import { toTypedSchema } from '@vee-validate/zod';
 import { CalendarIcon } from 'lucide-vue-next';
@@ -17,6 +17,7 @@ import { toast } from 'vue-sonner';
 import * as z from 'zod';
 import { Textarea } from './ui/textarea';
 
+const inertia = useInertiaRouter();
 const formSchema = toTypedSchema(
     z.object({
         title: z.string().min(2).max(50),
@@ -43,7 +44,7 @@ const value = computed({
 const onSubmit = handleSubmit((values) => {
     console.log('Form submitted with values:', values);
 
-    router.post(
+    inertia.post(
         route('goal.store'),
         {
             title: values.title,
@@ -51,7 +52,6 @@ const onSubmit = handleSubmit((values) => {
             deadline: values.deadline,
         },
         {
-            preserveScroll: true,
             onSuccess: () => {
                 // Reset form
                 setFieldValue('title', '');
@@ -61,7 +61,7 @@ const onSubmit = handleSubmit((values) => {
                     description: 'Your goal has been created and is now being tracked.',
                 });
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 console.error('Error creating goal:', error);
                 toast.error('Error: ' + error.message, {
                     description: 'Please check the form and try again.',

@@ -13,6 +13,7 @@ Route::prefix('goal')->name('goal.')->group(function () {
     Route::get('/create', [GoalController::class, 'create'])->name('create');
     Route::post('/store', [GoalController::class, 'store'])->name('store');
     Route::get('/{id}', [GoalController::class, 'show'])->name('show');
+    Route::post('/{id}/update', [GoalController::class, 'updateStatus'])->name('update');
     Route::delete('/{id}/delete', [GoalController::class, 'destroy'])->name('destroy');
 
     // Task routes nested under a goal

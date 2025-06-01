@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
-import { Check, Timer, Trash } from 'lucide-vue-next';
+import { useInertiaRouter } from '@/composables/useInertiaRouter';
+import { Check, Timer, TimerOff } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import ConfirmDialog from './ConfirmDialog.vue';
-import Icon from './Icon.vue';
-import { CardTitle } from './ui/card';
+
+const inertia = useInertiaRouter();
 
 const props = defineProps<{
     id: number;
@@ -19,89 +19,90 @@ const statuses = [
     { status: 'overdue', name: 'Overdue', color: 'text-red-500' },
 ];
 
-const getStatusColor = (status: string) => {
-    const found = statuses.find((s) => s.status === status);
-    return found ? found.color : 'Invalid Status';
-};
-
-const getStatusName = (status: string) => {
-    const found = statuses.find((s) => s.status === status);
-    return found ? found.name : 'Invalid Status';
-};
-
-const onClickChangeStatus = () => {
-    router.post(
-        route('task.update', { id: props.id }),
-        {},
-        {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => {
-                console.log('Status updated successfully');
-            },
-            onError: (error) => {
-                console.error('Error updating status:', error);
-            },
-        },
+const getStatus = (status: string) => {
+    return (
+        statuses.find((s) => s.status === status) || {
+            name: 'Invalid',
+            color: 'text-gray-400',
+        }
     );
 };
 
-const deleteTask = () => {
-    router.delete(route('task.destroy', props.id), {
-        preserveScroll: true,
-        preserveState: true,
+const onClickChangeStatus = () => {
+    inertia.post(route('task.update', { id: props.id }), {
         onSuccess: () => {
-            toast.success('Task deleted successfully', {
-                description: 'The task has been removed from your list.',
-            });
+            toast.success('Task status updated!');
         },
-        onError: (error) => {
-            console.error('Error deleting task:', error);
-            toast.error('Failed to delete task', {
-                description: 'There was an error removing the task. Please try again.',
-            });
+        onError: (error: any) => {
+            toast.error('Failed to update task status');
+            console.error(error);
         },
     });
 };
 
-const getMonthDayDate = (due_date: string) => {
-    const date = new Date(due_date);
-    const month = date.toLocaleString('en-EN', { month: 'short' });
-    const day = date.getDate();
+const deleteTask = () => {
+    inertia.delete(route('task.destroy', props.id), {
+        onSuccess: () => {
+            toast.success('Task deleted successfully');
+        },
+        onError: (error: any) => {
+            toast.error('Failed to delete task');
+            console.error(error);
+        },
+    });
+};
 
-    return month + ' ' + day;
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+    });
 };
 </script>
+
 <template>
     <div
-        :class="[props.status === 'completed' ? 'bg-gray-400/[0.1]' : '', 'pa-0 w-full p-4 hover:bg-gray-400/[0.1] active:bg-gray-400/[0.2]']"
+        class="group hover:bg-muted flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-4 py-3 transition"
         @click.stop.prevent="onClickChangeStatus"
     >
-        <div class="flex items-center justify-between">
-            <div class="flex items-center justify-center space-x-2">
-                <div :class="[props.status === 'completed' ? 'bg-green-500' : '', 'flex h-8 w-8 items-center justify-center rounded-full border']">
-                    <Check v-if="props.status === 'completed'" class="h-4 w-4" color="white" />
-                    <Timer v-else class="h-4 w-4" color="gray" />
-                </div>
-                <div>
-                    <CardTitle :class="(props.status === 'completed' ? 'text-gray-400 line-through ' : '') + 'text-sm'">{{ props.title }}</CardTitle>
-                    <div class="flex items-center justify-start space-x-1.5 text-sm font-medium">
-                        <p :class="getStatusColor(props.status)">{{ getStatusName(props.status) }}</p>
-                        <p class="text-gray-400">Due: {{ getMonthDayDate(props.due_date) }}</p>
-                    </div>
-                </div>
+        <!-- Left Side -->
+        <div class="flex flex-1 items-center gap-2">
+            <!-- Status Circle -->
+            <div
+                :class="[
+                    'flex h-9 w-9 items-center justify-center rounded-full border transition',
+                    props.status === 'completed' ? 'border-green-500 bg-green-500' : 'border-muted-foreground/20',
+                ]"
+            >
+                <Check v-if="props.status === 'completed'" class="h-4 w-4 text-white" />
+                <Timer v-else-if="props.status === 'in_progress'" class="text-muted-foreground h-4 w-4" />
+                <TimerOff v-else="props.status === 'overdue'" class="text-muted-foreground h-4 w-4" />
             </div>
-            <div class="flex items-center justify-end">
-                <Icon name="dot" stroke-width="6" :class="getStatusColor(props.status)" class="h-5 w-5" />
-                <ConfirmDialog
-                    type="task"
-                    title="Delete Task"
-                    description="Are you sure you want to delete this task?"
-                    :modelTitle="props.title"
-                    @confirm="deleteTask"
-                    :icon="Trash"
-                />
+
+            <!-- Task Info -->
+            <div class="flex flex-1 flex-col">
+                <span :class="['text-sm font-medium', props.status === 'completed' ? 'text-muted-foreground line-through' : 'text-foreground']">
+                    {{ props.title }}
+                </span>
+                <div class="text-muted-foreground text-xs">
+                    <span :class="getStatus(props.status).color">
+                        {{ getStatus(props.status).name }}
+                    </span>
+                    <span class="mx-1">•</span>
+                    <span>Due: {{ formatDate(props.due_date) }}</span>
+                </div>
             </div>
         </div>
+
+        <!-- Right Side: Actions -->
+        <ConfirmDialog
+            type="task"
+            :description="'Are you sure you want to delete this task?'"
+            :modelTitle="props.title"
+            variant="ghost"
+            class="text-muted-foreground opacity-0 transition group-hover:opacity-100 hover:text-red-500"
+            @confirm="deleteTask"
+        />
     </div>
 </template>
